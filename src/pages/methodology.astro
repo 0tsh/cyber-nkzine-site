@@ -1,0 +1,7 @@
+---
+import Base from '../layouts/Base.astro';
+import { getEntry, render } from 'astro:content';
+const entry = (await getEntry('pages', 'methodology'))!;
+const { Content } = await render(entry);
+---
+<Base title="Methodology"><h1>Methodology</h1><Content /></Base>

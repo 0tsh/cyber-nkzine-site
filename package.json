@@ -1,0 +1,19 @@
+{
+  "name": "dprk-cyber-index",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "data": "git clone --depth 1 https://github.com/0tsh/not-so-awesome-dprk-hacks.git data || git -C data pull"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.8"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
+  }
+}

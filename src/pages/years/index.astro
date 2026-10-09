@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro';
+import { byYear } from '../../lib/data';
+const years = await byYear();
+---
+<Base title="Years">
+  <h1>Events by year</h1>
+  <p class="muted">Year is the earliest four-digit year found in any date as written. It is for navigation only.</p>
+  <p class="chips">{years.map((y) => <a href={`/years/${y.year}/`}>{y.year} ({y.events.length})</a>)}</p>
+</Base>

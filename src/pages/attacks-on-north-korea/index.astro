@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const items = (await getCollection('nk-attacks')).sort((a, b) => a.data.id.localeCompare(b.data.id));
+---
+<Base title="Attacks on North Korea">
+  <h1>Attacks on North Korea</h1>
+  <p class="muted">Kept apart from the main list on purpose: these are attacks on North Korea, not by it.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Date (as written)</th><th>Incident</th><th>Source</th></tr></thead>
+    <tbody>{items.map((i) => <tr><td>{i.data.dateAsWritten ?? ''}</td><td><a href={`/attacks-on-north-korea/${i.data.id}/`}>{i.data.title}</a></td><td>{i.data.source ?? ''}</td></tr>)}</tbody>
+  </table></div>
+</Base>

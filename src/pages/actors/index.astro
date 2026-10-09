@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import { byActor } from '../../lib/data';
+const actors = await byActor();
+---
+<Base title="Actors">
+  <h1>Actor names, as written</h1>
+  <p class="muted">Names are listed exactly as sources wrote them. Different spellings and aliases are not merged.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Name</th><th>Events</th></tr></thead>
+    <tbody>{actors.map((a) => <tr><td><a href={`/actors/${a.slug}/`}>{a.name}</a></td><td>{a.events.length}</td></tr>)}</tbody>
+  </table></div>
+</Base>

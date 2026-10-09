@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import { bySource } from '../../lib/data';
+const sources = await bySource();
+---
+<Base title="Sources">
+  <h1>Sources</h1>
+  <p><a href="/data-sources/">Descriptions of each starting source and how it was used</a></p>
+  <div class="scroll"><table>
+    <thead><tr><th>Source</th><th>Events with an entry from it</th></tr></thead>
+    <tbody>{sources.map((s) => <tr><td><a href={`/sources/${s.slug}/`}>{s.name}</a></td><td>{s.events.length}</td></tr>)}</tbody>
+  </table></div>
+</Base>

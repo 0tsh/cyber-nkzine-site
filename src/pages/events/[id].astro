@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { byActor } from '../../lib/data';
+import { slugMap } from '../../lib/slug';
+export async function getStaticPaths() {
+  const ev = await getCollection('events');
+  return ev.map((e) => ({ params: { id: e.data.id }, props: { e } }));
+}
+const { e } = Astro.props;
+const d = e.data;
+const actorSlugs = slugMap((await byActor()).map((a) => a.name));
+const srcSlugs = slugMap((await getCollection('events')).flatMap((x) => x.data.sourceNames));
+const bits = (d.tags ?? '').split(/\s+/).filter(Boolean);
+---
+<Base title={d.title} description={`${d.title}${d.dateAsWritten ? ' (' + d.dateAsWritten + ')' : ''}: ${d.entries.length} source ${d.entries.length === 1 ? 'entry' : 'entries'}.`}>
+  <div data-pagefind-body data-pagefind-meta={`title:${d.title}`}>
+    <p class="muted">{d.id}</p>
+    <h1>{d.title}</h1>
+    <dl class="facts">
+      {d.dateAsWritten && <><dt>Date (as written)</dt><dd>{d.dateAsWritten}</dd></>}
+      {d.year !== 'undated' && <><dt>Year</dt><dd><a href={`/years/${d.year}/`} data-pagefind-filter="year">{d.year}</a></dd></>}
+      {d.year === 'undated' && <><dt>Year</dt><dd><a href="/years/undated/" data-pagefind-filter="year">undated</a></dd></>}
+      {d.country && <><dt>Country</dt><dd>{d.country}</dd></>}
+      {d.actors && <><dt>Actors (as written)</dt><dd>{d.actors}</dd></>}
+      {d.actorNames.length > 0 && <><dt>Actor pages</dt><dd class="chips">{d.actorNames.map((n) => <a href={`/actors/${actorSlugs.get(n)}/`} data-pagefind-filter="actor">{n}</a>)}</dd></>}
+      {d.tags && <><dt>Tags (as written)</dt><dd>{d.tags}</dd></>}
+      {d.dollarFiguresAsWritten && <><dt>Dollar figures (as written)</dt><dd>{d.dollarFiguresAsWritten}</dd></>}
+    </dl>
+
+    <h2>Source entries ({d.entries.length})</h2>
+    {d.entries.map((en) => (
+      <div class="entry">
+        <h3><a href={`/sources/${srcSlugs.get(en.source)}/`} data-pagefind-filter="source">{en.source}</a> · <span class="muted">{en.entryId}</span></h3>
+        {en.name && <div><strong>{en.name}</strong>{en.dateAsWritten && <span class="muted"> · {en.dateAsWritten}</span>}</div>}
+        {en.text && <blockquote>{en.text}</blockquote>}
+        {en.urls.map((u) => <div><a href={u} rel="noopener nofollow">{u}</a></div>)}
+      </div>
+    ))}
+
+    {d.filled.length > 0 && <>
+      <h2>Values found later for empty fields</h2>
+      {d.filled.map((f) => (
+        <div class="entry">
+          <strong>{f.field}:</strong> {f.value}
+          {f.quote && <blockquote>{f.quote}</blockquote>}
+          {f.sourceUrl && <div>{f.sourceUrl.split(/\s+/).filter((u) => /^https?:/.test(u)).map((u) => <div><a href={u} rel="noopener nofollow">{u}</a></div>)}</div>}
+        </div>
+      ))}
+    </>}
+
+    <p class="muted"><a href={`https://github.com/0tsh/not-so-awesome-dprk-hacks/edit/main/events/${d.id}.md`}>Suggest a correction on GitHub</a></p>
+
+    {d.note && <details><summary>Merge note</summary><p class="muted">{d.note}</p></details>}
+  </div>
+</Base>

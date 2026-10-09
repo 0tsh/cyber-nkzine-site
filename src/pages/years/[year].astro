@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventList from '../../components/EventList.astro';
+import { byYear } from '../../lib/data';
+export async function getStaticPaths() {
+  return (await byYear()).map((y) => ({ params: { year: y.year }, props: { events: y.events } }));
+}
+const { year } = Astro.params;
+const { events } = Astro.props;
+---
+<Base title={year === 'undated' ? 'Undated events' : `Events: ${year}`}>
+  <h1>{year === 'undated' ? 'Undated events' : year} <span class="muted">({events.length})</span></h1>
+  <EventList events={events} />
+</Base>

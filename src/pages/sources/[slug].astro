@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventList from '../../components/EventList.astro';
+import { bySource } from '../../lib/data';
+export async function getStaticPaths() {
+  return (await bySource()).map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+const { s } = Astro.props;
+---
+<Base title={s.name}>
+  <h1>{s.name} <span class="muted">({s.events.length})</span></h1>
+  <EventList events={s.events} />
+</Base>

@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+export async function getStaticPaths() {
+  return (await getCollection('nk-attacks')).map((a) => ({ params: { id: a.data.id }, props: { a } }));
+}
+const d = Astro.props.a.data;
+---
+<Base title={d.title}>
+  <p class="muted">{d.id} · attack on North Korea</p>
+  <h1>{d.title}</h1>
+  <dl class="facts">
+    {d.dateAsWritten && <><dt>Date (as written)</dt><dd>{d.dateAsWritten}</dd></>}
+    {d.victimCountry && <><dt>Victim country</dt><dd>{d.victimCountry}</dd></>}
+    {d.actors && <><dt>Actors (as written)</dt><dd>{d.actors}</dd></>}
+    {d.tags && <><dt>Tags</dt><dd>{d.tags}</dd></>}
+    {d.source && <><dt>Source</dt><dd>{d.source} {d.sourceEntryId && <span class="muted">· {d.sourceEntryId}</span>}</dd></>}
+  </dl>
+  {d.text && <div class="entry"><blockquote>{d.text}</blockquote></div>}
+  {d.urls.map((u) => <div><a href={u} rel="noopener nofollow">{u}</a></div>)}
+</Base>

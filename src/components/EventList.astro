@@ -1,0 +1,18 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { events: CollectionEntry<'events'>[] }
+const { events } = Astro.props;
+---
+<div class="scroll"><table>
+  <thead><tr><th>Date (as written)</th><th>Incident</th><th>Country</th><th>Actors</th></tr></thead>
+  <tbody>
+    {events.map((e) => (
+      <tr>
+        <td>{e.data.dateAsWritten ?? ''}</td>
+        <td><a href={`/events/${e.data.id}/`}>{e.data.title}</a></td>
+        <td>{e.data.country ?? ''}</td>
+        <td>{e.data.actors ?? ''}</td>
+      </tr>
+    ))}
+  </tbody>
+</table></div>

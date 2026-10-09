@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventList from '../../components/EventList.astro';
+import { byActor } from '../../lib/data';
+export async function getStaticPaths() {
+  return (await byActor()).map((a) => ({ params: { slug: a.slug }, props: { a } }));
+}
+const { a } = Astro.props;
+---
+<Base title={a.name}>
+  <h1>{a.name} <span class="muted">({a.events.length})</span></h1>
+  <p class="muted">Events whose actors field, as written by the source, names this.</p>
+  <EventList events={a.events} />
+</Base>

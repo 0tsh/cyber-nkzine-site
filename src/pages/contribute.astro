@@ -1,0 +1,7 @@
+---
+import Base from '../layouts/Base.astro';
+import { getEntry, render } from 'astro:content';
+const entry = (await getEntry('pages', 'contributing'))!;
+const { Content } = await render(entry);
+---
+<Base title="Contribute"><h1>Contribute</h1><Content /></Base>

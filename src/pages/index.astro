@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { allEvents, byYear, byActor } from '../lib/data';
+import { getCollection } from 'astro:content';
+const events = await allEvents();
+const years = await byYear();
+const actors = (await byActor()).slice(0, 30);
+const nk = await getCollection('nk-attacks');
+---
+<Base title="DPRK Cyber Index">
+  <h1>DPRK Cyber Index</h1>
+  <p>A compiled list of cyber activity attributed to North Korea, recorded as each source published it. Nothing here is a finding, ranking or verdict: every date, amount, name and attribution is copied as written, with the source and its own words.</p>
+  <p><strong>{events.length.toLocaleString('en-US')}</strong> events · <strong>{nk.length}</strong> attacks on North Korea (kept separate) · <a href="/search/">Search</a> · <a href="/methodology/">Read the methodology first</a></p>
+  <h2>By year</h2>
+  <p class="chips">{years.map((y) => <a href={`/years/${y.year}/`}>{y.year} ({y.events.length})</a>)}</p>
+  <h2>By actor name, as written by sources</h2>
+  <p class="chips">{actors.map((a) => <a href={`/actors/${a.slug}/`}>{a.name} ({a.events.length})</a>)} <a href="/actors/">All actor names</a></p>
+  <p><a href="/sources/">Browse by source</a> · <a href="/data-sources/">Source descriptions</a></p>
+</Base>
