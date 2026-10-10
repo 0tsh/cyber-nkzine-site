@@ -7,7 +7,7 @@ export async function getStaticPaths() {
 const d = Astro.props.a.data;
 ---
 <Base title={d.title}>
-  <p class="muted">{d.id} · attack on North Korea</p>
+  <p class="muted">Attack on North Korea</p>
   <h1>{d.title}</h1>
   <dl class="facts">
     {d.dateAsWritten && <><dt>Date (as written)</dt><dd>{d.dateAsWritten}</dd></>}
