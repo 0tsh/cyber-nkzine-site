@@ -11,7 +11,9 @@ const { e } = Astro.props;
 const d = e.data;
 const actorSlugs = slugMap((await byActor()).map((a) => a.name));
 const srcSlugs = slugMap((await getCollection('events')).flatMap((x) => x.data.sourceNames));
-const bits = (d.tags ?? '').split(/\s+/).filter(Boolean);
+// Some sources joined many links with ';' and no spaces; show each one on its own line.
+const linksOf = (urls: string[]) => urls.flatMap((u) => u.split(';')).map((u) => u.trim()).filter((u) => /^https?:\/\//.test(u));
+const SHOW = 5;
 ---
 <Base title={d.title} description={`${d.title}${d.dateAsWritten ? ' (' + d.dateAsWritten + ')' : ''}: ${d.entries.length} source ${d.entries.length === 1 ? 'entry' : 'entries'}.`}>
   <div data-pagefind-body data-pagefind-meta={`title:${d.title}`}>
@@ -31,10 +33,14 @@ const bits = (d.tags ?? '').split(/\s+/).filter(Boolean);
     <h2>Source entries ({d.entries.length})</h2>
     {d.entries.map((en) => (
       <div class="entry">
-        <h3><a href={`/sources/${srcSlugs.get(en.source)}/`} data-pagefind-filter="source">{en.source}</a> · <span class="muted">{en.entryId}</span></h3>
+        <h3><a href={`/sources/${srcSlugs.get(en.source)}/`} data-pagefind-filter="source">{en.source}</a></h3>
         {en.name && <div><strong>{en.name}</strong>{en.dateAsWritten && <span class="muted"> · {en.dateAsWritten}</span>}</div>}
         {en.text && <blockquote>{en.text}</blockquote>}
-        {en.urls.map((u) => <div><a href={u} rel="noopener nofollow">{u}</a></div>)}
+        {(() => { const links = linksOf(en.urls); const lead = links.slice(0, SHOW); const rest = links.slice(SHOW); const label = en.source === 'EuRepoC' ? 'Sources cited by EuRepoC' : 'Links'; return <>
+          {links.length > 0 && rest.length > 0 && <div class="muted">{label} ({links.length})</div>}
+          {lead.map((u) => <div><a href={u} rel="noopener nofollow">{u}</a></div>)}
+          {rest.length > 0 && <details><summary>Show {rest.length} more</summary>{rest.map((u) => <div><a href={u} rel="noopener nofollow">{u}</a></div>)}</details>}
+        </>; })()}
       </div>
     ))}
 
